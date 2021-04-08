@@ -15,7 +15,7 @@
               />
             </template>
           </q-input>
-          <q-btn color="primary" type="submit" label="Login"/>
+          <custom-buttom/>
           <p class="error">{{error}}</p>
         </q-form>
       </q-page>
@@ -27,9 +27,11 @@
 import { defineComponent, ref } from 'vue'
 import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
+import CustomButtom from '../../components/custom-buttom.vue'
 
 export default defineComponent({
   name: 'Login',
+  components: { CustomButtom },
   setup () {
     const store = useStore()
     const router = useRouter()
@@ -58,6 +60,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
 
 </style>

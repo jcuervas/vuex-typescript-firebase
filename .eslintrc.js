@@ -99,5 +99,12 @@ module.exports = {
     '@typescript-eslint/no-unsafe-assignment': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'object-curly-spacing': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     '@typescript-eslint/no-empty-interface': process.env.NODE_ENV === 'production' ? 'error' : 'off'
-  }
+  },
+
+  overrides: [
+    {
+      files: ['src/*'],
+      excludedFiles: 'cli/*'
+    }
+  ]
 }
