@@ -53,7 +53,6 @@ module.exports = {
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-file
     // required to lint *.vue files
     'vue',
-
   ],
 
   globals: {
@@ -94,7 +93,11 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
 
-    // allow debugger during development only
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    // allow during development only
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    '@typescript-eslint/no-unsafe-member-access': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    '@typescript-eslint/no-unsafe-assignment': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'object-curly-spacing': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    '@typescript-eslint/no-empty-interface': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }
 }

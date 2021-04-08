@@ -12,10 +12,24 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Remotion
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn-dropdown color="primary" :label="state.user.email">
+          <q-list>
+            <q-item clickable v-close-popup @click="onSettings">
+              <q-item-section>
+                <q-item-label>Configuracion</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup @click="logout">
+              <q-item-section>
+                <q-item-label>Cerrar sesion</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
@@ -30,7 +44,6 @@
           header
           class="text-grey-8"
         >
-          Essential Links
         </q-item-label>
 
         <EssentialLink
@@ -42,7 +55,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
@@ -95,7 +108,10 @@ const linksList = [
   }
 ]
 
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, reactive } from 'vue'
+import { useStore } from '../store'
+import { useRouter } from 'vue-router'
+import firebase from 'firebase/app'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -106,13 +122,34 @@ export default defineComponent({
 
   setup () {
     const leftDrawerOpen = ref(false)
+    const store = useStore()
+    const router = useRouter()
+    const state = reactive<{user: firebase.User}>({
+      user: store.getters['authModule/getUser']
+    })
+
+    function onSettings () {
+      return router.push({ name: 'Settings' })
+    }
+
+    async function logout () {
+      try {
+        await store.dispatch('authModule/logout')
+        return router.push({ name: 'Login' })
+      } catch (e) {
+        // todo show modal with error
+      }
+    }
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+      logout,
+      onSettings,
+      state
     }
   }
 })

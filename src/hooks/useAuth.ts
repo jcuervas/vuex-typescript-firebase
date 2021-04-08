@@ -1,10 +1,15 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { UserLoginError } from '../errors/userLoginError'
+import GenericError from '../errors/generic-error'
+import UserLoginError from '../errors/user-login-error'
 
 function useAuth () {
   function isAuthenticated () {
-    return firebase.auth().currentUser
+    return new Promise<boolean>(resolve => {
+      firebase.auth().onAuthStateChanged(user => {
+        resolve(user !== null)
+      })
+    })
   }
 
   function canUserAccess () {
@@ -13,7 +18,7 @@ function useAuth () {
 
   async function login (username: string, password: string): Promise<firebase.User|null> {
     try {
-      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       const credential = await firebase.auth().signInWithEmailAndPassword(username, password)
       return credential.user
     } catch (e) {
@@ -21,10 +26,20 @@ function useAuth () {
     }
   }
 
+  async function logout (): Promise<boolean> {
+    try {
+      await firebase.auth().signOut()
+      return true
+    } catch (e) {
+      throw new GenericError(e)
+    }
+  }
+
   return {
     isAuthenticated,
     canUserAccess,
-    login
+    login,
+    logout
   }
 }
 

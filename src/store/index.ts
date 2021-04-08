@@ -1,52 +1,30 @@
 import { store } from 'quasar/wrappers'
 import { InjectionKey } from 'vue'
-import {
-  createStore,
-  Store as VuexStore,
-  useStore as vuexUseStore
-} from 'vuex'
+import { createStore, Store as VuexStore, useStore as vuexUseStore, createLogger } from 'vuex'
+import authModule from './auth-module'
 
-// import example from './module-example'
-// import { ExampleStateInterface } from './module-example/state';
-
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
-
-export interface StateInterface {
-  // Define your own store structure, using submodules if needed
-  // example: ExampleStateInterface;
-  // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  example: unknown
+export interface State {
+  theme: string;
 }
 
 // provide typings for `this.$store`
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    $store: VuexStore<StateInterface>
+    $store: VuexStore<State>
   }
 }
 
 // provide typings for `useStore` helper
-export const storeKey: InjectionKey<VuexStore<StateInterface>> = Symbol('vuex-key')
+export const storeKey: InjectionKey<VuexStore<State>> = Symbol('vuex-key')
 
-export default store(function (/* { ssrContext } */) {
-  const Store = createStore<StateInterface>({
+export default store(() => {
+  return createStore<State>({
     modules: {
-      // example
+      authModule
     },
-
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
+    plugins: [createLogger()],
     strict: !!process.env.DEBUGGING
   })
-
-  return Store
 })
 
 export function useStore () {

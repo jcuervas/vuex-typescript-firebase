@@ -1,4 +1,4 @@
-export class UserLoginError {
+export default class GenericError {
   code: number;
   message: string;
   stack: string|undefined;

@@ -12,8 +12,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/Index.vue')
       }
     ],
-    beforeEnter: (to, from, next) => {
-      if (useAuth.isAuthenticated() && to.name !== 'Login') {
+    beforeEnter: async (to, from, next) => {
+      if (await useAuth.isAuthenticated()) {
         return next()
       } else {
         return next({ name: 'Login' })
@@ -21,9 +21,16 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: 'login',
+    path: '/login',
     name: 'Login',
-    component: () => import('pages/auth/Login.vue')
+    component: () => import('pages/auth/Login.vue'),
+    beforeEnter: async (to, from, next) => {
+      if (await useAuth.isAuthenticated()) {
+        return next({ name: 'Home' })
+      } else {
+        return next()
+      }
+    }
   },
   // Always leave this as last one,
   // but you can also remove it
