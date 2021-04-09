@@ -35,8 +35,8 @@ export default defineComponent({
   setup () {
     const store = useStore()
     const router = useRouter()
-    const username = ref<string>('admin@remotion.es')
-    const password = ref<string>('remotion')
+    const username = ref<string>('')
+    const password = ref<string>('')
     const isPwd = ref<boolean>(true)
     const error = ref<string>('')
 

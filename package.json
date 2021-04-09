@@ -10,7 +10,9 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build -m spa",
-    "create-user": "ts-node cli/index.ts"
+    "create-user": "ts-node cli/index.ts",
+    "deploy": "firebase deploy",
+    "emulators": "firebase emulators:start"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",

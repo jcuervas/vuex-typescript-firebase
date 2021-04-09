@@ -32,3 +32,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 /public/
+/database-debug.log
+/pubsub-debug.log
+/service-account.json
+/ui-debug.log

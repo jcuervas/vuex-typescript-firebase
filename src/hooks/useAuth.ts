@@ -4,6 +4,10 @@ import GenericError from '../errors/generic-error'
 import UserLoginError from '../errors/user-login-error'
 
 function useAuth () {
+  if (process.env.NODE_ENV === 'dev') {
+    firebase.auth().useEmulator("http://localhost:9099");
+  }
+
   function isAuthenticated () {
     return new Promise<boolean>(resolve => {
       firebase.auth().onAuthStateChanged(user => {
