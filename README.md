@@ -26,7 +26,7 @@ Firebase project configuration is set as env variable at quasar.config.js.
 yarn deploy
 ```
 #### Local development
-To use app y local environment without affecting production project just start the
+To use app and local environment without affecting production project just start the
 emulators and set NODE_ENV=dev. yarn dev will automatically set env to dev.
 With emulators running, just access to ui and create a user to login at remotion back office.
 ```bash
