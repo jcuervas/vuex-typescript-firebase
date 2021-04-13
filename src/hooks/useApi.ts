@@ -2,7 +2,7 @@ import { Campaign } from '../models/campaign'
 import { Client } from '../models/client'
 import firebase from 'firebase/app'
 import { appStore } from '../store'
-import axios from 'axios'
+import { axios } from '../boot/axios'
 
 type DataSource = 'firebase'|'webService'
 

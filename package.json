@@ -1,10 +1,10 @@
 {
-  "name": "remotion-quasar",
+  "name": "vuex-typescript-modules-firebase",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "Quasar starter template with vuex typings for modules and firebase",
   "author": "jcuervas <javier.cuervas@gmail.com>",
   "private": true,
+  "repository": "https://github.com/jcuervas/vuex-typescript-modules-firebase",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
