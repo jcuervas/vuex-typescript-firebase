@@ -4,15 +4,27 @@ import GenericError from '../errors/generic-error'
 import UserLoginError from '../errors/user-login-error'
 
 function useAuth () {
-  console.log({env: process.env.NODE_ENV})
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'dev') {
     firebase.auth().useEmulator('http://localhost:9099')
   }
 
   function isAuthenticated () {
     return new Promise<boolean>(resolve => {
       firebase.auth().onAuthStateChanged(user => {
+        console.log({user})
         resolve(user !== null)
+      })
+    })
+  }
+
+  function hasClaims () {
+    return new Promise(resolve => {
+      firebase.auth().onIdTokenChanged(token => {
+        token?.getIdTokenResult(true).then(token => {
+          console.log({token})
+          const {admin, agency, client} = token.claims
+          resolve(admin || agency || client)
+        })
       })
     })
   }
@@ -43,6 +55,7 @@ function useAuth () {
   return {
     isAuthenticated,
     canUserAccess,
+    hasClaims,
     login,
     logout
   }

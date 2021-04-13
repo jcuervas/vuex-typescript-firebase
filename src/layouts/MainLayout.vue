@@ -62,6 +62,10 @@
 
 <script lang="ts">
 import EssentialLink from 'components/EssentialLink.vue'
+import { defineComponent, reactive, ref } from 'vue'
+import { useStore } from '../store'
+import { useRouter } from 'vue-router'
+import firebase from 'firebase/app'
 
 const linksList = [
   {
@@ -108,11 +112,6 @@ const linksList = [
   }
 ]
 
-import { defineComponent, ref, reactive } from 'vue'
-import { useStore } from '../store'
-import { useRouter } from 'vue-router'
-import firebase from 'firebase/app'
-
 export default defineComponent({
   name: 'MainLayout',
 
@@ -124,8 +123,8 @@ export default defineComponent({
     const leftDrawerOpen = ref(false)
     const store = useStore()
     const router = useRouter()
-    const state = reactive<{user: firebase.User}>({
-      user: store.getters['authModule/getUser']
+    const state = reactive<{user: firebase.User|null}>({
+      user: store.getters.getUser
     })
 
     function onSettings () {
@@ -134,7 +133,7 @@ export default defineComponent({
 
     async function logout () {
       try {
-        await store.dispatch('authModule/logout')
+        await store.dispatch('logout')
         return router.push({ name: 'Login' })
       } catch (e) {
         // todo show modal with error

@@ -59,25 +59,9 @@ module.exports = configure(function (ctx) {
       distDir: 'public',
       // transpile: false,
       env: ctx.dev ? {
-        firebaseConfig: {
-          apiKey: 'AIzaSyClRfz_30FoJDDbud_-UbIyWMT4SOokQTY',
-          authDomain: 'remotion-products-bo.firebaseapp.com',
-          databaseURL: 'https://remotion-products-bo-default-rtdb.europe-west1.firebasedatabase.app',
-          projectId: 'remotion-products-bo',
-          storageBucket: 'remotion-products-bo.appspot.com',
-          messagingSenderId: '916273310211',
-          appId: '1:916273310211:web:3de53811a21726490abc36'
-        }
+        firebaseConfig: '<your-firebase-config>'
       } : {
-        firebaseConfig: {
-          apiKey: 'AIzaSyClRfz_30FoJDDbud_-UbIyWMT4SOokQTY',
-          authDomain: 'remotion-products-bo.firebaseapp.com',
-          databaseURL: 'https://remotion-products-bo-default-rtdb.europe-west1.firebasedatabase.app',
-          projectId: 'remotion-products-bo',
-          storageBucket: 'remotion-products-bo.appspot.com',
-          messagingSenderId: '916273310211',
-          appId: '1:916273310211:web:3de53811a21726490abc36'
-        }
+        firebaseConfig: '<your-firebase-config>'
       },
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).

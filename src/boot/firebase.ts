@@ -1,4 +1,5 @@
 import firebase from 'firebase/app'
+import { boot } from 'quasar/wrappers'
 
 interface FirebaseConfig {
   apiKey: string;
@@ -8,5 +9,6 @@ interface FirebaseConfig {
   messagingSenderId: string;
   appId: string;
 }
-
-firebase.initializeApp(process.env.firebaseConfig as unknown as FirebaseConfig)
+export default boot(({ app }) => {
+  firebase.initializeApp(process.env.firebaseConfig as unknown as FirebaseConfig)
+})
