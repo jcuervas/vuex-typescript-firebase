@@ -3,7 +3,6 @@ const readline = require("readline");
 
 function spawnProcess (cmd: string, args: string[] = []) {
   return new Promise<void>((resolve, reject) => {
-    console.info(cmd, args.join(' '))
     const childProcess = spawn(cmd, args)
     childProcess.on('stdout', resolve)
     childProcess.on('stderr', err => {
@@ -11,7 +10,6 @@ function spawnProcess (cmd: string, args: string[] = []) {
       reject()
     })
     childProcess.stdout.on('data', (data: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       console.info('[spawn] stdout:', data.toString().replace(/\s+$/g, ''))
     })
     childProcess.stderr.on('error', error => console.error('[spawn] stderr:', error.toString().replace(/\s+$/g, '')))

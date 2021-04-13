@@ -62,5 +62,4 @@ export default defineComponent({
 
 <style scoped lang="scss">
 
-
 </style>
