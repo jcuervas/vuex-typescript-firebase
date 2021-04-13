@@ -44,9 +44,7 @@ function createUser (
   password: string,
   displayName: string,
   photoURL: string) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault()
-  })
+
 
   const userProperties: admin.auth.CreateRequest = {
     email,
@@ -61,6 +59,9 @@ function createUser (
 }
 
 ( async () => {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+  })
   const {
     email,
     phoneNumber,

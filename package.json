@@ -10,7 +10,8 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build -m spa",
-    "create-user": "ts-node cli/index.ts",
+    "create-user": "ts-node cli/create-user.ts",
+    "add-role": "ts-node cli/add-role.ts",
     "deploy": "firebase deploy",
     "emulators": "firebase emulators:start"
   },
@@ -27,6 +28,7 @@
     "@types/core-js": "^2.5.4",
     "@types/eslint": "^7.2.8",
     "@types/minimist": "^1.2.1",
+    "@types/axios": "^0.14.0",
     "@types/node": "^10.17.15",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
