@@ -1,7 +1,7 @@
 # Vuex typescript modules
 
 This repository has a starter setup to use vue 3 with Quasar framework. It has initial configurations for:
-- vuex modules and typings
+- vuex typings
 - firebase authentication and roles management
 - routing and guard navigation for redirections depending on user role
 - some scripts to create users in firebase and manage its roles
@@ -26,6 +26,10 @@ See [Configuring quasar.conf.js](https://v2.quasar.dev/quasar-cli/quasar-conf-js
 
 ### Firebase
 Firebase project configuration is set as env variable at quasar.config.js, just change firebase config with your own
+If you want to deploy to firebase hosting you have to add your project to configuration.
+````bash
+yarn add-firebase-project
+````
 #### Deploy
 ```bash
 yarn deploy
@@ -33,7 +37,7 @@ yarn deploy
 #### Local development
 To use app and local environment without affecting production project just start the
 emulators and set NODE_ENV=dev. yarn dev will automatically set env to dev.
-With emulators running, just access to ui and create a user to login at remotion back office.
+With emulators running, just access to ui and create a user to login.
 ```bash
 yarn emulators
 ```
@@ -60,23 +64,13 @@ yarn add-role
 
 ## Vuex typings
 
-This repository shows how to wrap typings for vuex when implementing different modules.
-There are similar examples on the internet, but i noticed on them some difficulties that aimed
-me to share this repo and explain why i made the changes i made.
-
-The key for store typings is to create the Store type. With Omit (typescript function) we can make
-Store to be a VuexStore but remove from it commit and getters functions. With typescript intersection
-types we add our version of commit and getters, which will have the typings.
-Key difference with other examples is that we preserve original dispatch. This is because the use of modules
-will make us to call dispatch like this:
-```vue
-const store = useStore()
-store.dispatch('authModule/login', {email, password})
-```
-This module concatenation is understood by IDE when ctrl + click name and will preserve namespacing. If
-we replaced 'dispatch' also with own typings, namespacing will not be available and IDE won't let us compile.
+This repository shows how to wrap typings for vuex. Vuex 4 typing support is quite basic so i
+recommend not to use modules with this typings. Vuex 5 will come with full typescript support
+and it removes module concept by replacing with store composition.
 
 ## Routing
 
-As repo has implemented firebase authtentication, route forwarding and guarding is very interesting in this app.
-Take a look at how redirections are made depending on user roles and authenticated state
+As repo has implemented firebase authentication, route forwarding and guarding is a very interesting
+feature in this app.
+Take a look at how redirections are made depending on user roles and authenticated state, this is a starting
+point of something more complex

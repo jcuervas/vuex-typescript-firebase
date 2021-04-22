@@ -1,39 +1,25 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
 import GenericError from '../errors/generic-error'
 import UserLoginError from '../errors/user-login-error'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/auth'
+import { appStore } from '../store'
 
 function useAuth () {
-  if (process.env.NODE_ENV === 'dev') {
-    firebase.auth().useEmulator('http://localhost:9099')
-  }
-
   function isAuthenticated () {
-    return new Promise<boolean>(resolve => {
-      firebase.auth().onAuthStateChanged(user => {
-        console.log({user})
-        resolve(user !== null)
-      })
-    })
+    return appStore.state.isAuthenticated
   }
 
-  function hasClaims () {
-    return new Promise(resolve => {
-      firebase.auth().onIdTokenChanged(token => {
-        token?.getIdTokenResult(true).then(token => {
-          console.log({token})
-          const {admin, agency, client} = token.claims
-          resolve(admin || agency || client)
-        })
-      })
-    })
+  function hasAnyClaim () {
+    return appStore.state.isClient ||
+      appStore.state.isAgency ||
+      appStore.state.isAdmin
   }
 
   function canUserAccess () {
     return true
   }
 
-  async function login (username: string, password: string): Promise<firebase.User|null> {
+  async function login (username: string, password: string): Promise<firebase.User | null> {
     try {
       await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       const credential = await firebase.auth().signInWithEmailAndPassword(username, password)
@@ -55,7 +41,7 @@ function useAuth () {
   return {
     isAuthenticated,
     canUserAccess,
-    hasClaims,
+    hasAnyClaim,
     login,
     logout
   }

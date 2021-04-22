@@ -1,21 +1,22 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+  <q-layout view="hHh lpR lfr">
+    <q-header reveal bordered>
+      <q-toolbar class="bg-white text-dark">
         <q-btn
+          v-if="breadCrumb.icon"
           flat
           dense
           round
-          icon="menu"
+          :icon="breadCrumb.icon"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
+          @click="() => goTo(breadCrumb.to)"
         />
 
         <q-toolbar-title>
-          Remotion
+          {{ i18n.global.t(breadCrumb.label) }}
         </q-toolbar-title>
 
-        <q-btn-dropdown color="primary" :label="state.user.email">
+        <q-btn-dropdown color="primary" :label="state.user?.email">
           <q-list>
             <q-item clickable v-close-popup @click="onSettings">
               <q-item-section>
@@ -34,22 +35,22 @@
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-grey-1"
-    >
+      :width="70"
+      class="bg-grey-1">
       <q-list>
         <q-item-label
           header
-          class="text-grey-8"
-        >
+          class="text-grey-8">
         </q-item-label>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
+        <MenuLink
+          v-for="link in menuLinks"
+          :label="link.label && t(link.label)"
+          :link="link.routeName"
+          v-bind:key="link"
+          :icon="link.icon"
         />
       </q-list>
     </q-drawer>
@@ -61,71 +62,34 @@
 </template>
 
 <script lang="ts">
-import EssentialLink from 'components/EssentialLink.vue'
-import { defineComponent, reactive, ref } from 'vue'
+import MenuLink from 'components/MenuLink.vue'
+import { computed, defineComponent, reactive } from 'vue'
 import { useStore } from '../store'
-import { useRouter } from 'vue-router'
-import firebase from 'firebase/app'
+import { useRoute, useRouter } from 'vue-router'
+import firebase from 'firebase/compat/app'
+import { i18n } from 'boot/i18n'
+import { Toolbar } from 'src/router/routes'
+import { menu } from 'src/models/menuItem'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+interface LayoutState {
+  user: firebase.User | null
+}
 
 export default defineComponent({
   name: 'MainLayout',
-
   components: {
-    EssentialLink
+    MenuLink
   },
-
   setup () {
-    const leftDrawerOpen = ref(false)
     const store = useStore()
     const router = useRouter()
-    const state = reactive<{user: firebase.User|null}>({
-      user: store.getters.getUser
+    const route = useRoute()
+    const state = reactive<LayoutState>({
+      user: store.getters.getUser as firebase.User
     })
+    const mainRole = store.getters.mainRole
+    const menuLinks = menu.filter(item => item.showIf === mainRole)
+    const breadCrumb = computed<Toolbar>(() => route.meta.toolbar as Toolbar)
 
     function onSettings () {
       return router.push({ name: 'Settings' })
@@ -140,15 +104,23 @@ export default defineComponent({
       }
     }
 
+    function goTo (route: string) {
+      return router.push({ name: route })
+    }
+
+    function t (key: string) {
+      return i18n.global.t(`dashboard.${key}`)
+    }
+
     return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
+      menuLinks,
       logout,
       onSettings,
-      state
+      state,
+      i18n,
+      t,
+      goTo,
+      breadCrumb
     }
   }
 })

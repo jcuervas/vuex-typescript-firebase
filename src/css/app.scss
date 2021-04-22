@@ -1,1 +1,19 @@
 // app global css in SCSS form
+@import "helpers";
+@import "quasar.variables";
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  padding: 0;
+}
+
+a, a:visited {
+  text-decoration: none;
+  color: $darGrey;
+}
+
+.v-divider {
+  background: grey;
+  height: 80%;
+  width: 1.5px;
+}

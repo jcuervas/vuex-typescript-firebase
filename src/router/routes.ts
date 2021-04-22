@@ -2,61 +2,59 @@ import { RouteRecordRaw } from 'vue-router'
 import useAuth from '../hooks/useAuth'
 import { appStore } from '../store'
 
+export type RoutePath = '/' |
+  'dashboard' | '/auth' | 'login' | 'recover' |
+  '/:catchAll(.*)*'
+
+export type RouteName = 'Home' |
+  'Agency' | 'AgencyDashboard' |
+  'Admin' | 'AdminDashboard' |
+  'Auth' | 'Login' | 'Recover'
+
+export interface Toolbar {
+  label: string
+  icon: string
+  to: string
+}
+
+const toolbars = {
+  dashboard: {
+    label: 'appName'
+  },
+}
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Home',
+
     component: () => import('layouts/MainLayout.vue'),
     beforeEnter: async (to, from, next) => {
-      console.log('go to home')
-      console.log({admin: await appStore.dispatch('authModule/hasRole', 'admin')})
-      console.log({agency: await appStore.dispatch('authModule/hasRole', 'agency')})
-      console.log({client: await appStore.dispatch('authModule/hasRole', 'client')})
-      if (await appStore.dispatch('authModule/hasRole', 'admin')) {
-        return next({name: 'Admin'})
+      const name = (appStore.state.isAdmin && 'Admin') || (appStore.state.isAgency && 'Agency') || 'Login'
+      if (name === 'Login') {
+        // ensure there is no infinite redirections
+        await appStore.dispatch('logout')
       }
-      if (await appStore.dispatch('authModule/hasRole', 'agency')) {
-        return next({name: 'Agency'})
-      }
-      if (await appStore.dispatch('authModule/hasRole', 'client')) {
-        return next({name: 'Client'})
-      }
-      return next({name: 'Login'})
+      return next({ name })
     }
   },
   {
     path: '/agency',
     name: 'Agency',
-    redirect: {name: 'AgencyDashboard'},
+    meta: {
+      toolbar: toolbars.dashboard
+    },
+    redirect: { name: 'Campaigns' },
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
         path: 'dashboard',
         name: 'AgencyDashboard',
         component: () => import('pages/agency/Dashboard.vue')
-      }
+      },
     ],
-    beforeEnter: async (to, from, next) => {
-      if (await appStore.dispatch('authModule/hasRole', 'agency')) {
-        return next()
-      }
-      return next({ name: 'Login' })
-    }
-  },
-  {
-    path: '/client',
-    name: 'Client',
-    redirect: {name: 'ClientDashboard'},
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      {
-        path: 'dashboard',
-        name: 'ClientDashboard',
-        component: () => import('pages/client/Dashboard.vue')
-      }
-    ],
-    beforeEnter: async (to, from, next) => {
-      if (await appStore.dispatch('authModule/hasRole', 'client')) {
+    beforeEnter: (to, from, next) => {
+      if (appStore.state.isAgency) {
         return next()
       }
       return next({ name: 'Login' })
@@ -65,7 +63,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/admin',
     name: 'Admin',
-    redirect: {name: 'AdminDashboard'},
+    meta: {
+      toolbar: toolbars.dashboard
+    },
+    redirect: { name: 'AdminDashboard' },
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
@@ -74,8 +75,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/admin/Dashboard.vue')
       }
     ],
-    beforeEnter: async (to, from, next) => {
-      if (await appStore.dispatch('authModule/hasRole', 'admin')) {
+    beforeEnter: (to, from, next) => {
+      if (appStore.state.isAdmin) {
         return next()
       }
       return next({ name: 'Login' })
@@ -84,32 +85,27 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/auth',
     name: 'Auth',
-    redirect: {name: 'Login'},
+    redirect: { name: 'Login' },
     component: () => import('layouts/AuthLayout.vue'),
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = useAuth.isAuthenticated()
+      const hasClaims = useAuth.hasAnyClaim()
+      if (isAuthenticated && hasClaims) {
+        return next({ name: 'Home' })
+      } else {
+        return next()
+      }
+    },
     children: [
       {
         path: 'login',
         name: 'Login',
-        component: () => import('pages/auth/Login.vue'),
-        beforeEnter: async (to, from, next) => {
-          if (await useAuth.isAuthenticated() && await useAuth.hasClaims()) {
-            return next({ name: 'Home' })
-          } else {
-            return next()
-          }
-        }
+        component: () => import('pages/auth/Login.vue')
       },
       {
         path: 'recover',
         name: 'Recover',
-        component: () => import('pages/auth/Recover.vue'),
-        beforeEnter: async (to, from, next) => {
-          if (await useAuth.isAuthenticated() && await useAuth.hasClaims()) {
-            return next({ name: 'Home' })
-          } else {
-            return next()
-          }
-        }
+        component: () => import('pages/auth/Recover.vue')
       }
     ]
   },
